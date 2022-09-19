@@ -28,4 +28,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 endif(WIN32)
 
+add_subdirectory(external/googletest/googletest)
+
 add_subdirectory(include)
+add_subdirectory(test)

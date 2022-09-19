@@ -6,6 +6,7 @@ namespace cbl {
 // CLASS Streamable
 //==============================================================================
 
+/// \brief Helper class to output anything to an output stream.
 template <typename Func>
 class Streamable {
 public:
