@@ -10,10 +10,10 @@ namespace cbl {
 template <typename Func>
 class Streamable {
 public:
-    Streamable(Func func) : m_func(std::move(func)) {}
+    constexpr Streamable(Func func) : m_func(std::move(func)) {}
 
-    template <typename OStream>
-    friend OStream& operator<<(OStream& os, Streamable const& streamable) {
+    template <typename Os>
+    friend constexpr Os& operator<<(Os& os, Streamable const& streamable) {
         streamable.m_func(os);
         return os;
     }
@@ -25,7 +25,7 @@ private:
 //------------------------------------------------------------------------------
 //
 template <typename Func>
-auto make_streamable(Func func) {
+constexpr auto make_streamable(Func func) {
     return Streamable<Func>{std::move(func)};
 }
 
