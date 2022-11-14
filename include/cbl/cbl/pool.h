@@ -13,6 +13,8 @@
 #define POOL_LOG(...) static_assert(true)
 #endif
 
+namespace cbl {
+
 //==============================================================================
 // CLASS Pool<T>
 //==============================================================================
@@ -75,6 +77,7 @@ private:
     size_type allocated = 0;
 };
 
-#undef POOL_LOG
+} // namespace cbl
 
+#undef POOL_LOG
 #endif
