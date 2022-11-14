@@ -30,5 +30,5 @@ endif(WIN32)
 
 add_subdirectory(external/googletest/googletest)
 
-add_subdirectory(include)
+add_subdirectory(src)
 add_subdirectory(test)

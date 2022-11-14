@@ -1,3 +1,6 @@
+#ifndef CBL_STREAMABLE_H
+#define CBL_STREAMABLE_H
+
 #include <utility>
 
 namespace cbl {
@@ -30,3 +33,5 @@ constexpr auto make_streamable(Func func) {
 }
 
 } // namespace cbl
+
+#endif
