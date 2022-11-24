@@ -28,6 +28,11 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 endif(WIN32)
 
+if(${CMAKE_BUILD_TYPE} STREQUAL Coverage)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+endif()
+
 add_subdirectory(external/googletest/googletest)
 
 add_subdirectory(src)
