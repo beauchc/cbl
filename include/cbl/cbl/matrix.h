@@ -14,17 +14,11 @@ namespace cbl {
 
 template <typename T, size_t HEIGHT = 0, size_t WIDTH = 0>
 class Matrix {
+    class Row;
+
 public:
     using value_type = T;
     using size_type  = size_t;
-
-    class row_type {
-        std::array<T, WIDTH> m_row;
-
-    public:
-        T const& operator[](size_type i) const { return m_row[i]; }
-        T&       operator[](size_type i) { return m_row[i]; }
-    };
 
     constexpr Matrix() = default;
 
@@ -34,13 +28,8 @@ public:
     constexpr Matrix& operator=(Matrix&& o) noexcept = default;
     constexpr Matrix& operator=(Matrix const& o) = default;
 
-    constexpr row_type const& operator[](size_type i) const { return m_mat[i]; }
-    constexpr row_type&       operator[](size_type i) { return m_mat[i]; }
-
-    constexpr T const& operator()(size_type i, size_type j) const {
-        return (*this)[i][j];
-    }
-    constexpr T& operator()(size_type i, size_type j) { return (*this)[i][j]; }
+    constexpr Row const& operator[](size_type i) const { return m_mat[i]; }
+    constexpr Row&       operator[](size_type i) { return m_mat[i]; }
 
     constexpr size_type height() const { return HEIGHT; }
     constexpr size_type width() const { return WIDTH; }
@@ -49,7 +38,15 @@ public:
     constexpr size_type size() const { return HEIGHT * WIDTH; }
 
 private:
-    std::array<row_type, HEIGHT> m_mat{};
+    class Row {
+        std::array<T, WIDTH> m_row;
+
+    public:
+        T const& operator[](size_type i) const { return m_row[i]; }
+        T&       operator[](size_type i) { return m_row[i]; }
+    };
+
+    std::array<Row, HEIGHT> m_mat{};
     static_assert(sizeof(m_mat) == sizeof(T) * HEIGHT * WIDTH);
 };
 
@@ -79,19 +76,17 @@ public:
     }
     cbl::Span<T> operator[](size_type i) {
         assert(i < m_height);
-        return {data() + (i * m_width), m_width};
+        return {const_cast<T*>(data()) + (i * m_width), m_width};
     }
     size_t height() const { return m_height; }
     size_t width() const { return m_width; }
 
+    T const*  data() const { return m_mat.data(); }
     size_type size() const { return m_width * m_height; }
 
 private:
     using E = std::conditional_t<std::is_same_v<T, bool>, char, T>;
     static_assert(sizeof(char) == sizeof(bool));
-
-    T const* data() const { return m_mat.data(); }
-    T*       data() { return m_mat.data(); }
 
     std::vector<E> m_mat;
     size_t         m_height = 0, m_width = 0;
@@ -100,10 +95,6 @@ private:
 template <>
 bool const* Matrix<bool, 0, 0>::data() const {
     return reinterpret_cast<bool const*>(m_mat.data());
-}
-template <>
-bool* Matrix<bool, 0, 0>::data() {
-    return reinterpret_cast<bool*>(m_mat.data());
 }
 
 } // namespace cbl
