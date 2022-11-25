@@ -21,13 +21,20 @@ template <typename T>
 class UniquePtr {
 public:
     template <typename U>
-    /*implicit*/ UniquePtr(UniquePtr<U> o) : m_ptr(std::move(o.m_ptr)) {}
+    /*implicit*/ UniquePtr(UniquePtr<U>&& o) : m_ptr(std::move(o.m_ptr)) {}
+    ~UniquePtr() = default;
 
     UniquePtr(UniquePtr&&) noexcept = default;
     UniquePtr& operator=(UniquePtr&&) noexcept = default;
 
     UniquePtr(UniquePtr const&) noexcept = delete;
     UniquePtr& operator=(UniquePtr const&) noexcept = delete;
+
+    template<typename U>
+    UniquePtr& operator=(UniquePtr<U>&& o) {
+        m_ptr = std::move(o.m_ptr);
+        return *this;
+    }
 
     T const& operator*() const { return *m_ptr; }
     T&       operator*() { return *m_ptr; }

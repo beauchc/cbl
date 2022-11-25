@@ -21,7 +21,7 @@
 
 class IAccessor {
 public:
-    virtual ~IAccessor() {}
+    virtual ~IAccessor();
 
     template <typename T>
     std::optional<T> get() const = delete;
