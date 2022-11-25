@@ -1,8 +1,8 @@
-#include <cbl/debug_trace.h>
+#include <cbl/adt/small_vector.h>
 
 #include <gtest/gtest.h>
 
 //------------------------------------------------------------------------------
 //
-/// \todo Test debug_trace
-TEST(debug_trace, todo) {}
+/// \todo Test small_vector
+TEST(small_vector, todo) {}

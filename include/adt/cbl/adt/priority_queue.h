@@ -1,7 +1,7 @@
 #ifndef CBL_PRIORITY_QUEUE_H
 #define CBL_PRIORITY_QUEUE_H
 
-#include "private/priority_queue_impl.h"
+#include "internal/internal_priority_queue.h"
 
 namespace cbl {
 
@@ -10,7 +10,7 @@ namespace cbl {
 //==============================================================================
 
 template <typename T>
-class PriorityQueueEntry : private pimpl::PriorityQueueEntry<T> {
+class PriorityQueueEntry : private internal::PriorityQueueEntry<T> {
 public:
     T const& get() const { return this->value; }
 };
@@ -62,7 +62,7 @@ public:
     size_t size() const { return m_impl.size(); }
 
 private:
-    cbl::pimpl::PriorityQueue<T, Compare> m_impl;
+    cbl::internal::PriorityQueue<T, Compare> m_impl;
 };
 
 } // namespace cbl

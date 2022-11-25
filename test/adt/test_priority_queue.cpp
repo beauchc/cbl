@@ -1,8 +1,8 @@
-#include <cbl/debug_trace.h>
+#include <cbl/adt/priority_queue.h>
 
 #include <gtest/gtest.h>
 
 //------------------------------------------------------------------------------
 //
-/// \todo Test debug_trace
-TEST(debug_trace, todo) {}
+/// \todo Test priority_queue
+TEST(priority_queue, todo) {}

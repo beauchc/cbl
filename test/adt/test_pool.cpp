@@ -1,9 +1,8 @@
-#include <cbl/span.h>
+#include <cbl/adt/pool.h>
 
 #include <gtest/gtest.h>
 
 //------------------------------------------------------------------------------
 //
-TEST(span, todo) {
-    // TODO
-}
+/// \todo Test pool
+TEST(pool, todo) {}

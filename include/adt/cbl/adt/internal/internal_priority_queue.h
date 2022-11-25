@@ -21,7 +21,7 @@ class PriorityQueue;
 // NAMESPACE cbl::pimpl
 //==============================================================================
 
-namespace cbl::pimpl {
+namespace cbl::internal {
 
 //==============================================================================
 // CLASS PriorityQueueEntry<T>

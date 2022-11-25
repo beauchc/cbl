@@ -1,9 +1,8 @@
-#include <cbl/pool.h>
+#include <cbl/adt/unique_ptr.h>
 
 #include <gtest/gtest.h>
 
 //------------------------------------------------------------------------------
 //
-TEST(pool, todo) {
-    // TODO
-}
+/// \todo Test unique_ptr
+TEST(unique_ptr, todo) {}

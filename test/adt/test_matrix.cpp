@@ -1,4 +1,4 @@
-#include <cbl/matrix.h>
+#include <cbl/adt/matrix.h>
 
 #include <sstream>
 

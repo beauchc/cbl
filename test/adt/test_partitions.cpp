@@ -1,9 +1,8 @@
-#include <cbl/partitions.h>
+#include <cbl/adt/partitions.h>
 
 #include <gtest/gtest.h>
 
 //------------------------------------------------------------------------------
 //
-TEST(partitions, todo) {
-    // TODO
-}
+/// \todo Test partitions
+TEST(partitions, todo) {}

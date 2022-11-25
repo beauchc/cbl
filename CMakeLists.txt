@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.12)
 
 project(cbl)
 
-enable_testing()
-
 # Enable c++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -36,7 +34,10 @@ set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 add_definitions(-DNDEBUG)
 endif()
 
-add_subdirectory(external/googletest/googletest)
-
 add_subdirectory(src)
-add_subdirectory(test)
+
+if (NOT DEFINED ${CBL_DISABLE_TESTING})
+    enable_testing()
+    add_subdirectory(external/googletest/googletest)
+    add_subdirectory(test)
+endif()

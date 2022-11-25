@@ -1,7 +1,7 @@
 #ifndef CBL_MATRIX_H
 #define CBL_MATRIX_H
 
-#include <cbl/span.h>
+#include <cbl/adt/span.h>
 
 #include <array>
 #include <vector>
