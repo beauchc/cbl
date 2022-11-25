@@ -13,7 +13,7 @@ class IAccessorFactory {
 public:
     template <typename T>
     static cbl::UniquePtr<IAccessor> make_accessor(T t) {
-        return {cbl::make_unique<Accessor<T>>(std::move(t))};
+        return std::move(cbl::make_unique<Accessor<T>>(std::move(t)));
     }
 };
 
