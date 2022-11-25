@@ -1,14 +1,16 @@
-add_subdirectory(dispatch_apply)
+set(experiments
+    dispatch_apply
+    iaccessor
+)
 
-function(add_exp_test filename)
-    string(LENGTH ${filename} len)
-    math(EXPR len ${len}-4)
-    string(SUBSTRING ${filename} 0 ${len} target_name)
-
-    set(target_name exp_${target_name})
-    add_executable(${target_name} ${filename} ${ARGN})
+function(add_exp_dir_test dirname)
+    set(target_name exp_${dirname})
+    file(GLOB SOURCES "${dirname}/*.cpp")
+    add_executable(${target_name} ${SOURCES})
     target_link_libraries(${target_name} gtest gtest_main)
     add_test(NAME ${target_name} COMMAND ${target_name})
 endfunction()
 
-add_exp_test(iaccessor.cpp iapply.cpp)
+foreach(exp ${experiments})
+    add_exp_dir_test(${exp})
+endforeach()
