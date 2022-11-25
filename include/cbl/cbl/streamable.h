@@ -13,11 +13,19 @@ namespace cbl {
 template <typename Func>
 class Streamable {
 public:
-    constexpr Streamable(Func func) : m_func(std::move(func)) {}
+    constexpr explicit Streamable(Func&& func)
+        : m_func(std::forward<Func>(func)) {}
+    constexpr Streamable(Streamable&&) noexcept = default;
+
+    Streamable()                  = delete;
+    Streamable(Streamable const&) = delete;
+    Streamable& operator=(Streamable const&) = delete;
+    Streamable& operator=(Streamable&&) = delete;
 
     template <typename Os>
     friend constexpr Os& operator<<(Os& os, Streamable const& streamable) {
-        streamable.m_func(os);
+        auto const& f = streamable.m_func;
+        f(os);
         return os;
     }
 
@@ -28,8 +36,8 @@ private:
 //------------------------------------------------------------------------------
 //
 template <typename Func>
-constexpr auto make_streamable(Func func) {
-    return Streamable<Func>{std::move(func)};
+constexpr auto make_streamable(Func&& func) {
+    return Streamable<Func>{std::forward<Func>(func)};
 }
 
 } // namespace cbl

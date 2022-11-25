@@ -33,6 +33,7 @@ endif(WIN32)
 if(${CMAKE_BUILD_TYPE} STREQUAL Coverage)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+add_definitions(-DNDEBUG)
 endif()
 
 add_subdirectory(external/googletest/googletest)

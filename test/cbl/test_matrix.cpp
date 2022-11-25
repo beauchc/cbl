@@ -1,5 +1,7 @@
 #include <cbl/matrix.h>
 
+#include <sstream>
+
 #include <gtest/gtest.h>
 
 //------------------------------------------------------------------------------
@@ -22,6 +24,9 @@ bool operator==(MyInt const& lhs, MyInt const& rhs) {
     if (!rhs.m_int) return false;
     return *lhs.m_int == *rhs.m_int;
 }
+std::ostream& operator<<(std::ostream& os, MyInt const& lhs) {
+    return os << "MI(" << *lhs.m_int << ")";
+}
 } // namespace
 
 //------------------------------------------------------------------------------
@@ -39,7 +44,7 @@ size_t size_of(T const&) {
 }
 template <typename T>
 size_t size_of(cbl::Matrix<T> const& m) {
-    return 0;
+    return m.size() * sizeof (T);
 }
 
 } // namespace
@@ -72,31 +77,51 @@ TYPED_TEST(matrix, tests) {
     }
     ASSERT_EQ(2, mat.height());
     ASSERT_EQ(3, mat.width());
-    ASSERT_LE(size_of(mat), (2 * 3 * sizeof(T)));
+    ASSERT_EQ(size_of(mat), (2 * 3 * sizeof(T)));
 
-    mat(0, 0) = T(0);
-    mat(0, 1) = T(1);
-    mat(0, 2) = T(2);
-    mat(1, 0) = T(3);
-    mat(1, 1) = T(4);
-    mat(1, 2) = T(5);
+    ASSERT_EQ(T(), mat[0][0]);
+    ASSERT_EQ(T(), mat[0][1]);
+    ASSERT_EQ(T(), mat[0][2]);
+    ASSERT_EQ(T(), mat[1][0]);
+    ASSERT_EQ(T(), mat[1][1]);
+    ASSERT_EQ(T(), mat[1][2]);
 
-    ASSERT_EQ(T(0), mat(0, 0));
-    ASSERT_EQ(T(1), mat(0, 1));
-    ASSERT_EQ(T(2), mat(0, 2));
-    ASSERT_EQ(T(3), mat(1, 0));
-    ASSERT_EQ(T(4), mat(1, 1));
-    ASSERT_EQ(T(5), mat(1, 2));
+    mat[0][0] = T(0);
+    mat[0][1] = T(1);
+    mat[0][2] = T(2);
+    mat[1][0] = T(3);
+    mat[1][1] = T(4);
+    mat[1][2] = T(5);
+
+    ASSERT_EQ(T(0), mat[0][0]);
+    ASSERT_EQ(T(1), mat[0][1]);
+    ASSERT_EQ(T(2), mat[0][2]);
+    ASSERT_EQ(T(3), mat[1][0]);
+    ASSERT_EQ(T(4), mat[1][1]);
+    ASSERT_EQ(T(5), mat[1][2]);
 
     // const
     auto const& cmat = mat;
     ASSERT_EQ(2, cmat.height());
     ASSERT_EQ(3, cmat.width());
 
-    ASSERT_EQ(T(0), cmat(0, 0));
-    ASSERT_EQ(T(1), cmat(0, 1));
-    ASSERT_EQ(T(2), cmat(0, 2));
-    ASSERT_EQ(T(3), cmat(1, 0));
-    ASSERT_EQ(T(4), cmat(1, 1));
-    ASSERT_EQ(T(5), cmat(1, 2));
+    ASSERT_EQ(T(0), cmat[0][0]);
+    ASSERT_EQ(T(1), cmat[0][1]);
+    ASSERT_EQ(T(2), cmat[0][2]);
+    ASSERT_EQ(T(3), cmat[1][0]);
+    ASSERT_EQ(T(4), cmat[1][1]);
+    ASSERT_EQ(T(5), cmat[1][2]);
+
+    using namespace std::string_literals;
+    std::stringstream ss;
+    ss << mat;
+    if constexpr (std::is_same_v<T, bool>) {
+        EXPECT_EQ("Matrix{{0, 1, 1}, {1, 1, 1}}"s, ss.str());
+    } else if constexpr (std::is_same_v<T, MyInt>) {
+        EXPECT_EQ("Matrix{{MI(0), MI(1), MI(2)}, {MI(3), MI(4), MI(5)}}"s,
+                  ss.str());
+    } else {
+        EXPECT_EQ("Matrix{{0, 1, 2}, {3, 4, 5}}"s, ss.str());
+    }
+    ss.str("");
 }

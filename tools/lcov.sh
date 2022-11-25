@@ -16,9 +16,9 @@ echo "CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}"
 mkdir -p ${CMAKE_BINARY_DIR}/coverage
 cd ${CMAKE_BINARY_DIR}/coverage
 
-llvm-cov gcov -f -b `find ../test -name *.gcda` &> /dev/null
-lcov --directory .. --base-directory .. --gcov-tool llvm-gcov.sh --capture -o coverage.info --include "${CMAKE_SOURCE_DIR}/src/*" --include "${CMAKE_SOURCE_DIR}/include/*"
+llvm-cov gcov -m -f -b `find ../test -name *.gcda` &> /dev/null
+lcov --rc lcov_branch_coverage=1 --directory .. --base-directory .. --gcov-tool llvm-gcov.sh --capture -o coverage.info --include "${CMAKE_SOURCE_DIR}/src/*" --include "${CMAKE_SOURCE_DIR}/include/*"
 
 mkdir -p ${CMAKE_SOURCE_DIR}/coverage
-genhtml --prefix=${CMAKE_SOURCE_DIR} coverage.info -o ${CMAKE_SOURCE_DIR}/coverage
+genhtml --rc lcov_branch_coverage=1 --demangle-cpp --branch-coverage --prefix=${CMAKE_SOURCE_DIR} coverage.info -o ${CMAKE_SOURCE_DIR}/coverage
 
