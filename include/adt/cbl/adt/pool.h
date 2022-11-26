@@ -21,6 +21,11 @@ namespace cbl {
 
 template <typename T>
 class Pool {
+private:
+    template <typename... Args>
+    using enable_if_constructible_t =
+        std::enable_if_t<std::is_constructible_v<T, Args...>>;
+
 public:
     using value_type = T;
     using size_type  = size_t;
@@ -28,7 +33,7 @@ public:
     void reset(size_type n) {
         POOL_LOG("reset");
         assert(allocated == 0);
-        pool.reset(new T[n]);
+        pool.reset(std::make_unique<T[]>(n));
         begin = pool.get();
         end   = begin + n;
     }
@@ -46,6 +51,13 @@ public:
         begin = end = nullptr;
     }
 
+    template <typename... Args, typename = enable_if_constructible_t<Args...>>
+    T* construct(Args&&... args) {
+        auto t = allocate(1);
+        new (t) T(std::forward<Args>(args)...);
+        return t;
+    }
+
     T* allocate(size_type n, const void* /*hint*/ = 0) {
         POOL_LOG("allocate ", n);
         assert(begin + n <= end);
@@ -60,6 +72,8 @@ public:
         assert(allocated >= n);
         CBL_DEBUG_CODE(allocated -= n);
     }
+
+    size_type remaining() const { return std::distance(begin, end); }
 
 private:
     template <typename Os, typename... Args>
