@@ -23,7 +23,7 @@
 #error  TRS should be defined in debug_trace_toggle.h
 #endif
 #undef  TRS
-#define TRS TR("========== ", __LINE__, " ==========")
+#define TRS(N) TR(cbl::tr::Separator(N))
 
 #ifndef TR_BLOCK
 #error  TR_BLOCK should be defined in debug_trace_toggle.h
@@ -76,6 +76,10 @@ struct NewLine {
     explicit NewLine(int n) : n(n) {}
     int n;
 };
+struct Separator {
+    explicit Separator(int n) : n(n) {}
+    int n;
+};
 
 //------------------------------------------------------------------------------
 //
@@ -122,6 +126,10 @@ template <>
 void tr_impl(std::ostream& os, NewLine const& nl) {
     os << '\n';
     tr_impl(os, Indent(nl.n));
+}
+template <>
+void tr_impl(std::ostream& os, Separator const& sep) {
+     for (int i = 0; i < sep.n; ++i) os << '=';
 }
 
 template <typename T1, typename T2>

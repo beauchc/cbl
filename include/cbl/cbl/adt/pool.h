@@ -33,7 +33,7 @@ public:
     void reset(size_type n) {
         POOL_LOG("reset");
         assert(allocated == 0);
-        pool.reset(std::make_unique<T[]>(n));
+        pool = std::make_unique<T[]>(n);
         begin = pool.get();
         end   = begin + n;
     }

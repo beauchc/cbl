@@ -34,6 +34,7 @@ set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 add_definitions(-DNDEBUG)
 endif()
 
+include(cmake/utils.cmake)
 add_subdirectory(src)
 
 if (NOT DEFINED ${CBL_DISABLE_TESTING})
