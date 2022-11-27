@@ -1,3 +1,4 @@
+set(missing_test "    *** WARNING ***: Missing test for")
 
 function(add_libs_unittests libpath)
     get_filename_component(libname ${libpath} DIRECTORY)
@@ -15,11 +16,12 @@ function(add_libs_unittests libpath)
         file(GLOB sources RELATIVE ${test_dir} "${test_dir}/*.cpp")
 
         set(target cbl_${dir}_unittests)
-        set(s "    ")
+
         message(STATUS "Configuring unittests '${target}'")
         foreach(source ${sources})
-            message(STATUS "${s}${source}")
+            message(STATUS "    ${source}")
         endforeach()
+        list(TRANSFORM sources PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/${dir}/")
 
         foreach(header ${headers})
             set(test_file ${header})
@@ -27,10 +29,9 @@ function(add_libs_unittests libpath)
             string(REPLACE ".h" ".cpp" test_file ${test_file})
             string(PREPEND test_file "${test_dir}/test_")
             if ( NOT EXISTS ${test_file} )
-                message(STATUS "${s}WARNING: Missing test for ${header}")
+                message(STATUS "${missing_test} ${header}")
             endif()
         endforeach()
-        list(TRANSFORM sources PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/${dir}/")
 
         if ( NOT ${libname} STREQUAL "cbl" )
             set(libname cbl_${libname})
