@@ -19,7 +19,7 @@ if(MSVC)
   add_definitions(/MP)
 endif()
 
-set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions")
 if(WIN32)
 set(CMAKE_CXX_FLAGS_DEBUG "/ZI /Od")
 set(CMAKE_CXX_FLAGS_RELEASE "/O2")
