@@ -1,7 +1,7 @@
 #ifndef CBL_POOL_H
 #define CBL_POOL_H
 
-#include <cbl/debug_code.h>
+#include <cbl/macro.h>
 
 #include <cassert>
 #include <memory>

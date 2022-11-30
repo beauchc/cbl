@@ -1,6 +1,7 @@
 #include <cbl/io/ostream.h>
 
 #include <array>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -30,6 +31,12 @@ TEST(tr, traits) {
     static_assert(is_iterable_v<std::array<int, 4>&>);
     static_assert(is_iterable_v<std::array<int, 4>&&>);
     static_assert(is_iterable_v<std::array<int, 4> const&>);
+
+    static_assert(is_iterable_v<std::vector<int>>);
+    static_assert(is_iterable_v<std::vector<int>&>);
+    static_assert(is_iterable_v<std::vector<int>&&>);
+    static_assert(is_iterable_v<std::vector<int> const&>);
+
     static_assert(!is_iterable_v<int>);
     static_assert(!is_iterable_v<int&>);
     static_assert(!is_iterable_v<int&&>);

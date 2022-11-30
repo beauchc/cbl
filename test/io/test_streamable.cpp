@@ -1,4 +1,4 @@
-#include <cbl/stream/streamable.h>
+#include <cbl/io/streamable.h>
 
 #include <sstream>
 
