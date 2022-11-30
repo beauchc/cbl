@@ -8,6 +8,8 @@
 #include <ostream>
 #include <type_traits>
 
+#include <iostream> // remove
+
 //==============================================================================
 // FORWARD DECLARATIONS
 //==============================================================================
@@ -31,41 +33,24 @@ struct endl_t {};
 struct ostream_details {
     struct newline {};
 
-    struct indent {
-        explicit indent(unsigned indent) : m_indent(indent), m_reset(indent) {}
-
-        explicit operator bool() const { return m_indent > 0; }
-
-        void operator=(unsigned indent) {
-            if (m_reset == m_indent) m_indent = indent;
-            m_reset = indent;
-        }
-        void operator+=(unsigned indent) {
-            if (m_reset == m_indent) m_indent += indent;
-            m_reset += indent;
-        }
-        void operator-=(unsigned indent) {
-            assert(m_reset >= indent);
-            if (m_reset == m_indent) m_indent -= indent;
-            m_reset -= indent;
-        }
-
-        void reset() { m_indent = m_reset; }
-
-        unsigned m_indent;
-        unsigned m_reset;
-    };
-
     using pretty     = iomanip::pretty;
     using set_indent = iomanip::set_indent;
 
-    CBL_SFINAE_TEST(is_iterable, begin(), const);
+    CBL_SFINAE_TEST(is_iterable_sfinae, begin(), const);
+
+    template <typename T>
+    inline static constexpr bool is_string_v =
+        std::is_convertible_v<T, std::string_view>;
+
+    template <typename T>
+    inline static constexpr bool is_iterable_v =
+        !is_string_v<T> && is_iterable_sfinae<T>::value;
 
     template <typename T, typename R = void>
-    using enable_if_iterable = std::enable_if_t<is_iterable<T>::value, R>;
+    using enable_if_iterable = std::enable_if_t<is_iterable_v<T>, R>;
 
     template <typename T, typename R = void>
-    using enable_if_scalar = std::enable_if_t<!is_iterable<T>::value, R>;
+    using enable_if_scalar = std::enable_if_t<!is_iterable_v<T>, R>;
 };
 
 //==============================================================================
@@ -81,7 +66,11 @@ public:
         (write(args), ...);
     }
 
-    void add_indent(int delta) { m_indent += delta; }
+    void add_indent(int delta) {
+        indent += delta;
+        assert(indent >= 0);
+    }
+    void swap_prefix(std::string_view& other) { std::swap(other, prefix); }
 
 private:
     template <typename T>
@@ -91,20 +80,23 @@ private:
     }
     void write(iomanip::pretty const& pretty) { m_pretty = pretty; }
 
-    void write(iomanip::set_indent const& si) { m_indent = si.m_indent; }
+    void write(iomanip::set_indent const& si) { indent = si.m_indent; }
 
-    void write(iomanip::line const& l) {
-        os << std::setw(l.m_size) << std::setfill(l.m_c) << l.m_c;
-    }
+    void write(iomanip::set_prefix const& sp) { prefix = sp.m_prefix; }
 
     void wr(newline const&) {
         os << '\n';
-        m_indent.reset();
+        need_indent = true;
     }
 
     void wr(endl_t const&) {
         os << std::endl;
-        m_indent.reset();
+        need_indent = true;
+    }
+
+    void wr(iomanip::line const& l) {
+        pre_wr();
+        os << std::setw(l.m_size) << std::setfill(l.m_c) << l.m_c;
     }
 
     template <typename T>
@@ -140,25 +132,27 @@ private:
     }
 
     void pre_wr() {
-        if (m_indent) {
-            write(iomanip::line{m_indent.m_indent, ' '});
-            m_indent.m_indent = 0;
-        }
+        if (!need_indent) return;
+        os << prefix;
+        if (indent) os << std::setw(indent) << std::setfill(' ') << ' ';
+        need_indent = false;
     }
-
     void push_pretty() {
-        m_indent += m_pretty.m_indent;
+        add_indent(m_pretty.m_indent);
         --m_pretty.m_depth;
     }
-
     void pop_pretty() {
-        m_indent -= m_pretty.m_indent;
+        add_indent(-m_pretty.m_indent);
         ++m_pretty.m_depth;
     }
 
     std::ostream& os;
 
-    indent m_indent{0};
+    std::string_view prefix {};
+
+    bool need_indent = true;
+    int  indent      = 0;
+
     pretty m_pretty{0, 0};
 };
 

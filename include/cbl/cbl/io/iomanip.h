@@ -39,9 +39,18 @@ struct pretty {
 //==============================================================================
 
 struct line {
-    explicit line(unsigned size, char c) : m_size(size), m_c(c) {}
+    explicit line(int size, char c) : m_size(size), m_c(c) { assert(size > 0); }
     unsigned m_size;
     char     m_c;
+};
+
+//==============================================================================
+// STRUCT set_prefix
+//==============================================================================
+
+struct set_prefix {
+    explicit set_prefix(std::string_view prefix) : m_prefix{prefix} {}
+    std::string_view m_prefix;
 };
 
 } // namespace cbl::iomanip

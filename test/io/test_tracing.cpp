@@ -18,12 +18,12 @@ using namespace std::string_view_literals;
 #undef TR_OS
 #define TR_OS os
 
-#define EXPECT_TR_EQ(EXP, ...)                                    \
-    {                                                             \
-        std::stringstream ss;                                     \
-        cbl::ostream      os{ss};                                 \
-        TR(__VA_ARGS__);                                          \
-        EXPECT_EQ(STRINGIZE(__LINE__) " : " EXP "\n"s, ss.str()); \
+#define EXPECT_TR_EQ(EXP, ...)                                   \
+    {                                                            \
+        std::stringstream ss;                                    \
+        cbl::ostream      os{ss};                                \
+        TR(__VA_ARGS__);                                         \
+        EXPECT_EQ(STRINGIZE(__LINE__) ": " EXP "\n"s, ss.str()); \
     }
 
 //==============================================================================
@@ -78,20 +78,20 @@ TEST(tracing, TRC) {
 
 //------------------------------------------------------------------------------
 //
-inline auto TRI = R"(101 : start
-102 : A
-104 : bbbb {
-    105 : B
-    107 : {
-     108 : C
-    107 : }
-    110 : D
-    112 : eeee {
-      113 : E
-    112 : }
-    115 : F
-104 : }
-117 : G
+inline auto TRI = R"(101: start
+102: A
+104: bbbb {
+105:     B
+107:     {
+108:      C
+107:     }
+110:     D
+112:     eeee {
+113:       E
+112:     }
+115:     F
+104: }
+117: G
 )"s;
 
 TEST(ostream, TRI) {

@@ -8,7 +8,7 @@
 namespace test_io_helpers {
 template <typename T>
 constexpr bool is_iterable_v =
-    cbl::internal::ostream_details::is_iterable<T>::value;
+    cbl::internal::ostream_details::is_iterable_v<T>;
 
 template <typename... Args>
 std::string str(Args&&... args) {

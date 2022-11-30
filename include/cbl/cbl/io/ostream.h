@@ -17,6 +17,7 @@ inline auto endl = internal::endl_t{};
 class ostream {
 public:
     class indent_scope;
+    class prefix_scope;
 
     explicit ostream(std::ostream& os) : impl{os} {}
 
@@ -43,39 +44,68 @@ public:
 
     /// \brief Constructor
     explicit indent_scope(ostream& os, int indent)
-        : m_os(&os), m_indent(indent) {
-        m_os->impl.add_indent(m_indent);
+        : m_os(&os), m_scoped(indent) {
+        m_os->impl.add_indent(m_scoped);
     }
-
-    /// \brief Move constructor
-    indent_scope(indent_scope&& o) noexcept
-        : m_os(o.m_os), m_indent(o.m_indent) {
-        o.m_os = nullptr;
-    }
-
-    /// \brief Move assign operator
-    indent_scope& operator=(indent_scope&& o) noexcept {
-        std::swap(m_os, o.m_os);
-        std::swap(m_indent, o.m_indent);
-        return *this;
-    }
-
-    /// \brief indent_scope is not copiable
-    indent_scope(indent_scope const&) = delete;
-
-    /// \brief indent_scope is not copy assignable
-    indent_scope& operator=(indent_scope const&) = delete;
 
     /// \brief Destructor
     ~indent_scope() {
-        if (m_os) m_os->impl.add_indent(-m_indent);
+        if (m_os) m_os->impl.add_indent(-m_scoped);
     }
 
-    cbl::ostream& os() { return *m_os; }
+    indent_scope(indent_scope&& o) noexcept {
+        std::swap(m_os, o.m_os);
+        std::swap(m_scoped, o.m_scoped);
+    }
+    indent_scope& operator=(indent_scope&& o) {
+        std::swap(m_os, o.m_os);
+        std::swap(m_scoped, o.m_scoped);
+        return *this;
+    }
+
+    indent_scope(indent_scope const&) = delete;
+    indent_scope& operator=(indent_scope const&) = delete;
 
 private:
-    ostream* m_os = nullptr;
-    int      m_indent = 0;
+    ostream* m_os     = nullptr;
+    int      m_scoped = 0;
+};
+
+//==============================================================================
+// CLASS ostream::prefix_scope
+//==============================================================================
+
+class ostream::prefix_scope {
+public:
+    prefix_scope() = default;
+
+    /// \brief Constructor
+    explicit prefix_scope(ostream& os, std::string_view prefix)
+        : m_os(&os), m_scoped(prefix) {
+        m_os->impl.swap_prefix(m_scoped);
+    }
+
+    /// \brief Destructor
+    ~prefix_scope() {
+        if (m_os) m_os->impl.swap_prefix(m_scoped);
+    }
+
+    prefix_scope(prefix_scope&& o) noexcept {
+        std::swap(m_os, o.m_os);
+        std::swap(m_scoped, o.m_scoped);
+    }
+    prefix_scope& operator=(prefix_scope&& o) noexcept {
+        std::swap(m_os, o.m_os);
+        std::swap(m_scoped, o.m_scoped);
+        return *this;
+    }
+
+    prefix_scope(prefix_scope const&) = delete;
+    prefix_scope& operator=(prefix_scope const&) = delete;
+
+private:
+    ostream*         m_os = nullptr;
+    std::string_view m_scoped;
 };
 
 //------------------------------------------------------------------------------
