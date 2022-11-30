@@ -1,3 +1,4 @@
+/*
 #include <cbl/tr/dbg.h>
 
 #include <array>
@@ -80,3 +81,4 @@ TEST(tr_dbg, trc) {
 TEST(tr_dbg, tri) {
     /// \todo Test TRI
 }
+*/

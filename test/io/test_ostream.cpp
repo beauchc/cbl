@@ -1,37 +1,23 @@
-#include <cbl/tr/tr.h>
+#include <cbl/io/ostream.h>
 
 #include <array>
-#include <vector>
 
 #include <gtest/gtest.h>
+
+#include "helpers.h"
 
 //------------------------------------------------------------------------------
 //
 using namespace std::string_literals;
 using namespace std::string_view_literals;
+using namespace test_io_helpers;
 
+//------------------------------------------------------------------------------
+//
 template <typename T>
-constexpr bool is_iterable_v = cbl::tr_internal::is_iterable<T>::value;
-
-template <typename T>
-std::string str(T&& t) {
-    using namespace cbl::tr_ns;
-    std::stringstream ss;
-    ss << tr(std::forward<T>(t));
-    return ss.str();
-}
-template <typename T>
-std::string str_nice(int indent, T&& t) {
-    using namespace cbl::tr_ns;
-    std::stringstream ss;
-    ss << tr_nice(std::forward<T>(t), indent);
-    return ss.str();
-}
-
-template <typename T>
-class trT : public testing::Test {};
-using trT_types = ::testing::Types<int, std::array<int, 3>>;
-TYPED_TEST_CASE(trT, trT_types);
+class ostream : public testing::Test {};
+using ostream_types = ::testing::Types<int, std::array<int, 3>>;
+TYPED_TEST_CASE(ostream, ostream_types);
 
 //==============================================================================
 // TESTS
@@ -69,7 +55,7 @@ struct helper<std::array<int, 3>> {
 
 //------------------------------------------------------------------------------
 //
-TYPED_TEST(trT, simple) {
+TYPED_TEST(ostream, simple) {
     using T = TypeParam;
 
     T        a1 = helper<T>::simple_value();
@@ -84,14 +70,43 @@ TYPED_TEST(trT, simple) {
 
 //------------------------------------------------------------------------------
 //
-TEST(tr, nice_array) {
-    using namespace std::string_literals;
+inline auto indent_scope_expected = R"(
+A
+  B
+  CDE
+    FG
+  H
+      IJ
+  K
+L
+)"s;
 
-    std::array<int, 3>        a1{1, 2, 3};
-    std::array<int, 3>&       a2 = a1;
-    std::array<int, 3> const& a3 = a1;
+TEST(ostream, indent_scope) {
+    std::stringstream ss;
+    cbl::ostream os{ss};
 
-    EXPECT_EQ("{\n1,\n2,\n3\n}"s, str_nice(0, a2));                  // &
-    EXPECT_EQ("{\n 1,\n 2,\n 3\n}"s, str_nice(1, a3));               // const&
-    EXPECT_EQ("{\n  1,\n  2,\n  3\n}"s, str_nice(2, std::move(a1))); // &&
+    os << cbl::endl;
+    os << 'A' << cbl::endl;
+    {
+        auto g1 = os.make_indent_scope(2);
+        os << 'B' << cbl::endl;
+        os << 'C';
+        os << 'D';
+        {
+            auto g2 = os.make_indent_scope(2);
+            os << 'E' << cbl::endl;
+            os << 'F';
+        }
+        os << 'G' << cbl::endl;
+        os << 'H' << cbl::endl;
+        {
+            auto g2 = os.make_indent_scope(4);
+            os << 'I';
+            os << 'J' << cbl::endl;
+        }
+        os << 'K' << cbl::endl;
+    }
+    os << 'L' << cbl::endl;
+
+    EXPECT_EQ(indent_scope_expected, ss.str());
 }
