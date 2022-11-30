@@ -1,5 +1,4 @@
-/*
-#include <cbl/tr/dbg.h>
+#include <cbl/io/tracing.h>
 
 #include <array>
 #include <vector>
@@ -17,11 +16,12 @@ using namespace std::string_view_literals;
 #define STRINGIZE(x) STRINGIZE2(x)
 
 #undef TR_OS
-#define TR_OS ss
+#define TR_OS os
 
 #define EXPECT_TR_EQ(EXP, ...)                                    \
     {                                                             \
         std::stringstream ss;                                     \
+        cbl::ostream      os{ss};                                 \
         TR(__VA_ARGS__);                                          \
         EXPECT_EQ(STRINGIZE(__LINE__) " : " EXP "\n"s, ss.str()); \
     }
@@ -32,7 +32,7 @@ using namespace std::string_view_literals;
 
 //------------------------------------------------------------------------------
 //
-TEST(tr_dbg, simple) {
+TEST(tracing, TR) {
     std::array<int, 3>        a1 = {1, 2, 3};
     std::array<int, 3>&       a2 = a1;
     std::array<int, 3> const& a3 = a1;
@@ -46,7 +46,7 @@ TEST(tr_dbg, simple) {
 
 //------------------------------------------------------------------------------
 //
-TEST(tr_dbg, trv) {
+TEST(tracing, TRV) {
     std::array<int, 3>        a1 = {1, 2, 3};
     std::array<int, 3>&       a2 = a1;
     std::array<int, 3> const& a3 = a1;
@@ -60,7 +60,7 @@ TEST(tr_dbg, trv) {
 
 //------------------------------------------------------------------------------
 //
-TEST(tr_dbg, trs) {
+TEST(tracing, TRS) {
     EXPECT_TR_EQ(
         "==================================="
         "===================================",
@@ -71,14 +71,13 @@ TEST(tr_dbg, trs) {
 
 //------------------------------------------------------------------------------
 //
-TEST(tr_dbg, trc) {
+TEST(tracing, TRC) {
     TRC(int i = 42);
     EXPECT_EQ(42, i);
 }
 
 //------------------------------------------------------------------------------
 //
-TEST(tr_dbg, tri) {
+TEST(tracing, TRI) {
     /// \todo Test TRI
 }
-*/

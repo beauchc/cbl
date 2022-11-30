@@ -1,13 +1,13 @@
-#ifndef CBL_TR_DBG_INTERNAL_H
-#define CBL_TR_DBG_INTERNAL_H
+#ifndef CBL_IO_INTERNAL_TRACING_H
+#define CBL_IO_INTERNAL_TRACING_H
 
-#include <cbl/tr/tr.h>
+#include <cbl/io/ostream.h>
 
 #define CBL_INTERNAL_TR(OS, ...) cbl::TR_IMPL::trace{OS, __LINE__}(__VA_ARGS__)
 #define CBL_INTERNAL_TRC(code) code // code block
 
-#define CBL_INTERNAL_TRS(...) (cbl::TR_IMPL::sep{__VA_ARGS__})   // separator
-#define CBL_INTERNAL_TRV(EXPR) cbl::TR_IMPL::expr{#EXPR}, (EXPR) // var/expr
+#define CBL_INTERNAL_TRS(...) cbl::TR_IMPL::sep(__VA_ARGS__) // separator
+#define CBL_INTERNAL_TRV(EXPR) #EXPR, " = ", (EXPR)          // var/expr
 
 #define CBL_INTERNAL_TRI(...) \
     cbl::TR_IMPL::tri cbl_TR_guard##__LINE__{__LINE__, __VA_ARGS__};
@@ -20,38 +20,19 @@ namespace cbl::TR_IMPL {
 
 //------------------------------------------------------------------------------
 //
-struct expr {
-    char const* name;
-};
-struct sep {
-    int size = 70;
-};
+auto sep(unsigned size = 70) { return cbl::iomanip::line{size, '='}; }
 
-template <typename Os>
 struct trace {
-    trace(Os& os, int line) : os(os), line(line) {}
+    trace(cbl::ostream& os, int line) : os(os), line(line) {}
 
-    void write(expr arg) const { os << arg.name << " = "; }
-    void write(sep arg) const {
-        for (int i = 0; i < arg.size; ++i) os << '=';
-    }
-    template <typename Arg>
-    void write(Arg&& arg) const {
-        os << tr(std::forward<Arg>(arg));
-    }
-    template <typename Arg, typename... Args>
-    void write(Arg&& arg, Args&&... args) const {
-        write(std::forward<Arg>(arg));
-        write(std::forward<Args>(args)...);
-    }
     template <typename... Args>
     void operator()(Args&&... args) const {
         os << line << " : ";
-        write(std::forward<Args>(args)...);
-        os << '\n';
+        ((os << args), ...);
+        os << cbl::endl;
     }
 
-    Os& os;
+    cbl::ostream& os;
     int line;
 };
 

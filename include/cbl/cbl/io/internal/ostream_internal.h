@@ -89,9 +89,13 @@ private:
         wr(t);
         m_pretty.m_depth = 0;
     }
-    void write(pretty const& pretty) { m_pretty = pretty; }
+    void write(iomanip::pretty const& pretty) { m_pretty = pretty; }
 
-    void write(set_indent const& si) { m_indent = si.m_indent; }
+    void write(iomanip::set_indent const& si) { m_indent = si.m_indent; }
+
+    void write(iomanip::line const& l) {
+        os << std::setw(l.m_size) << std::setfill(l.m_c) << l.m_c;
+    }
 
     void wr(newline const&) {
         os << '\n';
@@ -137,7 +141,7 @@ private:
 
     void pre_wr() {
         if (m_indent) {
-            os << std::setw(m_indent.m_indent) << ' ';
+            write(iomanip::line{m_indent.m_indent, ' '});
             m_indent.m_indent = 0;
         }
     }

@@ -33,6 +33,17 @@ struct pretty {
     unsigned m_indent;
     unsigned m_depth;
 };
+
+//==============================================================================
+// STRUCT line
+//==============================================================================
+
+struct line {
+    explicit line(unsigned size, char c) : m_size(size), m_c(c) {}
+    unsigned m_size;
+    char     m_c;
+};
+
 } // namespace cbl::iomanip
 
 #endif
