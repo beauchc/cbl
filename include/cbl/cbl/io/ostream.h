@@ -16,6 +16,8 @@ inline auto endl = internal::endl_t{};
 
 class ostream {
 public:
+    template <typename Scoped>
+    class scope;
     class indent_scope;
     class prefix_scope;
 
@@ -35,77 +37,76 @@ private:
 };
 
 //==============================================================================
-// CLASS ostream::indent_scope
+// CLASS ostream::scope<Scoped>
 //==============================================================================
 
-class ostream::indent_scope {
+template<typename Scoped>
+class ostream::scope {
 public:
-    indent_scope() = default;
+    scope() = default;
+    ~scope() = default;
 
     /// \brief Constructor
-    explicit indent_scope(ostream& os, int indent)
-        : m_os(&os), m_scoped(indent) {
-        m_os->impl.add_indent(m_scoped);
-    }
+    explicit scope(ostream& os, Scoped scoped)
+        : m_os(&os), m_scoped(std::move(scoped)) {}
 
-    /// \brief Destructor
-    ~indent_scope() {
-        if (m_os) m_os->impl.add_indent(-m_scoped);
-    }
-
-    indent_scope(indent_scope&& o) noexcept {
+    scope(scope&& o) noexcept {
         std::swap(m_os, o.m_os);
         std::swap(m_scoped, o.m_scoped);
     }
-    indent_scope& operator=(indent_scope&& o) {
+    scope& operator=(scope&& o) {
         std::swap(m_os, o.m_os);
         std::swap(m_scoped, o.m_scoped);
         return *this;
     }
 
+    scope(scope const&) = delete;
+    scope& operator=(scope const&) = delete;
+
+protected:
+    ostream* m_os = nullptr;
+    Scoped   m_scoped{};
+};
+
+//==============================================================================
+// CLASS ostream::indent_scope
+//==============================================================================
+
+class ostream::indent_scope : public scope<int> {
+public:
+    explicit indent_scope(ostream& os, int indent) : scope<int>(os, indent) {
+        m_os->impl.add_indent(m_scoped);
+    }
+    ~indent_scope() {
+        if (m_os) m_os->impl.add_indent(-m_scoped);
+    }
+
+    indent_scope() = default;
+    indent_scope(indent_scope&& o) noexcept = default;
+    indent_scope& operator=(indent_scope&& o) = default;
     indent_scope(indent_scope const&) = delete;
     indent_scope& operator=(indent_scope const&) = delete;
-
-private:
-    ostream* m_os     = nullptr;
-    int      m_scoped = 0;
 };
 
 //==============================================================================
 // CLASS ostream::prefix_scope
 //==============================================================================
 
-class ostream::prefix_scope {
+class ostream::prefix_scope : public scope<std::string_view>{
 public:
-    prefix_scope() = default;
-
-    /// \brief Constructor
     explicit prefix_scope(ostream& os, std::string_view prefix)
-        : m_os(&os), m_scoped(prefix) {
+        : scope<std::string_view>(os, prefix) {
         m_os->impl.swap_prefix(m_scoped);
     }
-
-    /// \brief Destructor
     ~prefix_scope() {
         if (m_os) m_os->impl.swap_prefix(m_scoped);
     }
 
-    prefix_scope(prefix_scope&& o) noexcept {
-        std::swap(m_os, o.m_os);
-        std::swap(m_scoped, o.m_scoped);
-    }
-    prefix_scope& operator=(prefix_scope&& o) noexcept {
-        std::swap(m_os, o.m_os);
-        std::swap(m_scoped, o.m_scoped);
-        return *this;
-    }
-
+    prefix_scope() = default;
+    prefix_scope(prefix_scope&& o) noexcept  = default;
+    prefix_scope& operator=(prefix_scope&& o) noexcept =default;
     prefix_scope(prefix_scope const&) = delete;
     prefix_scope& operator=(prefix_scope const&) = delete;
-
-private:
-    ostream*         m_os = nullptr;
-    std::string_view m_scoped;
 };
 
 //------------------------------------------------------------------------------
