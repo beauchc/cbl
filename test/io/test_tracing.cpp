@@ -78,6 +78,42 @@ TEST(tracing, TRC) {
 
 //------------------------------------------------------------------------------
 //
-TEST(tracing, TRI) {
-    /// \todo Test TRI
+inline auto TRI = R"(101 : start
+102 : A
+104 : bbbb {
+    105 : B
+    107 : {
+     108 : C
+    107 : }
+    110 : D
+    112 : eeee {
+      113 : E
+    112 : }
+    115 : F
+104 : }
+117 : G
+)"s;
+
+TEST(ostream, TRI) {
+    std::stringstream ss;
+    cbl::ostream os{ss};
+
+    TR("start");
+    TR('A');
+    {
+        TRC(TRI("bbbb"));
+        TR('B');
+        {
+            TRC(TRI(1));
+            TR('C');
+        }
+        TR('D');
+        {
+            TRC(TRI("eeee", 2));
+            TR('E');
+        }
+        TR('F');
+    }
+    TR('G');
+    EXPECT_EQ(TRI, ss.str());
 }

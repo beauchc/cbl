@@ -39,6 +39,8 @@ private:
 
 class ostream::indent_scope {
 public:
+    indent_scope() = default;
+
     /// \brief Constructor
     explicit indent_scope(ostream& os, int indent)
         : m_os(&os), m_indent(indent) {
@@ -53,9 +55,8 @@ public:
 
     /// \brief Move assign operator
     indent_scope& operator=(indent_scope&& o) noexcept {
-        m_os     = o.m_os;
-        m_indent = o.m_indent;
-        o.m_os   = nullptr;
+        std::swap(m_os, o.m_os);
+        std::swap(m_indent, o.m_indent);
         return *this;
     }
 
@@ -70,9 +71,11 @@ public:
         if (m_os) m_os->impl.add_indent(-m_indent);
     }
 
+    cbl::ostream& os() { return *m_os; }
+
 private:
-    ostream* m_os;
-    int      m_indent;
+    ostream* m_os = nullptr;
+    int      m_indent = 0;
 };
 
 //------------------------------------------------------------------------------

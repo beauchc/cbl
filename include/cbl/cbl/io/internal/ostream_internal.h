@@ -1,5 +1,5 @@
-#ifndef CBL_IO_OSTREAM_INTERNAL_H
-#define CBL_IO_OSTREAM_INTERNAL_H
+#ifndef CBL_IO_INTERNAL_OSTREAM_H
+#define CBL_IO_INTERNAL_OSTREAM_H
 
 #include <cbl/io/iomanip.h>
 

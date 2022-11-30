@@ -17,7 +17,7 @@
 
 // TRC and macros that can be used inside TRC blocks
 #undef TRC
-#define TRC(...) CBL_INTERNAL_TRC(__VA_ARGS__) // code block
-#define TRI(...) CBL_INTERNAL_TRI(__VA_ARGS__) // indent block
+#define TRC(...) CBL_INTERNAL_TRC(__VA_ARGS__)        // code block
+#define TRI(...) CBL_INTERNAL_TRI(TR_OS, __VA_ARGS__) // indent block
 
 #endif

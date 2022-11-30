@@ -1,5 +1,5 @@
-#ifndef CBL_IOMANIP_H
-#define CBL_IOMANIP_H
+#ifndef CBL_IO_IOMANIP_H
+#define CBL_IO_IOMANIP_H
 
 #include <iomanip>
 #include <cassert>

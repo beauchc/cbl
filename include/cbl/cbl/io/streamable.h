@@ -1,5 +1,5 @@
-#ifndef CBL_STREAMABLE_H
-#define CBL_STREAMABLE_H
+#ifndef CBL_IO_STREAMABLE_H
+#define CBL_IO_STREAMABLE_H
 
 #include <utility>
 
