@@ -1,9 +1,10 @@
 #ifndef CBL_IO_TRACING_H
 #define CBL_IO_TRACING_H
 
-#include <cbl/io/iostream.h>
-
 #include <cbl/io/internal/tracing_internal.h>
+
+#include <cbl/io/iostream.h>
+#include <cbl/io/iomanip.h>
 
 // cbl::ostream to use for tracing.
 // can be redefined if needed.
@@ -14,6 +15,7 @@
 #define TR(...) CBL_INTERNAL_TR(TR_OS, __VA_ARGS__)
 #define TRS(...) CBL_INTERNAL_TRS(__VA_ARGS__) // separator
 #define TRV(expr) CBL_INTERNAL_TRV(expr)       // variable/expression
+#define TRP(expr) CBL_INTERNAL_TRP(expr)       // pretty variable/expression
 
 // TRC and macros that can be used inside TRC blocks
 #undef TRC

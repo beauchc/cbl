@@ -6,12 +6,20 @@
 namespace cbl {
 
 //==============================================================================
+// CLASS StreamableBase
+//==============================================================================
+
+/// \brief Base class of Streamable<Func>.
+/// Useful to specialize/enable_if functions on Streamable
+class StreamableBase {};
+
+//==============================================================================
 // CLASS Streamable
 //==============================================================================
 
 /// \brief Helper class to output anything to an output stream.
 template <typename Func>
-class Streamable {
+class Streamable : public StreamableBase {
 public:
     constexpr explicit Streamable(Func&& func)
         : m_func(std::forward<Func>(func)) {}

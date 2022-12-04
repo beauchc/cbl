@@ -13,8 +13,10 @@
 #define CBL_INTERNAL_TR(OS, ...) \
     cbl::TR_IMPL::trace{OS, CBL_INTERNAL_TR_PREFIX}(__VA_ARGS__)
 
-#define CBL_INTERNAL_TRS(...) cbl::TR_IMPL::sep(__VA_ARGS__) // separator
-#define CBL_INTERNAL_TRV(EXPR) #EXPR, " = ", (EXPR)          // var/expr
+#define CBL_INTERNAL_TRS(...) cbl::TR_IMPL::sep(__VA_ARGS__)        // separator
+#define CBL_INTERNAL_TRV(EXPR) #EXPR " = ", (EXPR)                  // var/expr
+#define CBL_INTERNAL_TRP(EXPR) \
+#EXPR " = ", cbl::iomanip::pretty(), EXPR // pretty
 
 #define CBL_INTERNAL_TRC(code) code // code block
 #define CBL_INTERNAL_TRI(OS, ...) \

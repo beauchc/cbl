@@ -23,12 +23,15 @@ struct set_indent {
 //==============================================================================
 
 struct pretty {
-    explicit pretty(int indent, int depth = -1)
+    explicit pretty(int indent, int depth)
         : m_indent(static_cast<unsigned>(indent)),
           m_depth(static_cast<unsigned>(depth)) {
         assert(indent >= 0);
         assert(depth >= -1);
     }
+    explicit pretty(int indent) : pretty(indent, -1) {}
+    explicit pretty() : pretty(4, -1) {}
+
     explicit operator bool() const { return m_depth; }
     unsigned m_indent;
     unsigned m_depth;
