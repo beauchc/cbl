@@ -1,6 +1,7 @@
 set(experiments
     dispatch_apply
     iaccessor
+    any
 )
 
 function(add_exp_dir_test dirname)
