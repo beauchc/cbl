@@ -1,4 +1,4 @@
-#include "exp.h"
+#include "tests.h"
 
 #include <gtest/gtest.h>
 
@@ -82,7 +82,7 @@ TEST(virtualize, tests) {
     EXPECT_EQ(false, g2.get());
 
     auto getter = virtualize(&MyClass::get);
-    std::cerr << (sizeof(getter.m_fn)) << std::endl;
+    // std::cerr << (sizeof(getter.m_fn)) << std::endl;
 
     EXPECT_EQ(true, getter(&mc1));
     EXPECT_EQ(false, getter(&mc2));
