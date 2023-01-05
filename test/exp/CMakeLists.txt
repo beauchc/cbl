@@ -2,6 +2,7 @@ set(experiments
     dispatch_apply
     iaccessor
     any
+    rtti
 )
 
 function(add_exp_dir_test dirname)
